@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Kalam:wght@400;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -1394,4 +1396,109 @@ input:checked+.slider-round:before {
 .sidebar-recent-item:hover {
   background: #f1f5f9;
   color: #0f172a;
+}
+
+/* ==================== WHITEBOARD CIKGUAI ==================== */
+.cikguai-board-wrapper {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: radial-gradient(circle at center, #ffffff 65%, #f7f4e8 100%);
+  --tl-font-draw: 'Kalam', cursive !important;
+}
+
+/* Kunci kanvas supaya user tidak boleh conteng bebas */
+.cikguai-board-wrapper .tl-canvas,
+.cikguai-board-wrapper .tl-background {
+  background: transparent !important;
+}
+
+.cikguai-board-wrapper .tl-shapes {
+  pointer-events: none !important;
+}
+
+/* Sorokkan semua toolbar & menu lalai tldraw */
+.cikguai-board-wrapper .tlui-layout,
+.cikguai-board-wrapper .tlui-menu-zone,
+.cikguai-board-wrapper .tlui-toolbar,
+.cikguai-board-wrapper .tlui-style-panel__wrapper,
+.cikguai-board-wrapper .tlui-navigation-zone,
+.cikguai-board-wrapper .tlui-help-menu,
+.cikguai-board-wrapper .tlui-debug-panel,
+.cikguai-board-wrapper [class*="watermark"] {
+  display: none !important;
+}
+
+/* Paksa font tulisan pen papan putih pada semua teks & SVG tldraw */
+.cikguai-board-wrapper .tl-container {
+  --tl-font-draw: 'Caveat', 'Kalam', cursive !important;
+  --tl-font-sans: 'Caveat', 'Kalam', cursive !important;
+}
+
+.cikguai-board-wrapper .tl-text-shape__wrapper,
+.cikguai-board-wrapper .tl-text-content,
+.cikguai-board-wrapper .tl-rich-text,
+.cikguai-board-wrapper .tl-rich-text *,
+.cikguai-board-wrapper text,
+.cikguai-board-wrapper [data-font="draw"] {
+  font-family: 'Caveat', 'Kalam', cursive !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.3px;
+}
+
+/* Kapsul & Butang Kawalan Minimalis */
+.cikguai-icon-pill {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(10px);
+  border: 1.5px solid #cbd5e1;
+  border-radius: 999px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+}
+
+.cikguai-circle-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.cikguai-circle-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+/* Animasi pen bergerak semasa CikguAI menulis */
+@keyframes penWiggle {
+
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  25% {
+    transform: translate(3px, -4px) rotate(6deg);
+  }
+
+  50% {
+    transform: translate(6px, 2px) rotate(-4deg);
+  }
+
+  75% {
+    transform: translate(2px, -3px) rotate(4deg);
+  }
+}
+
+.cikguai-writing-pen {
+  position: fixed;
+  z-index: 450;
+  pointer-events: none;
+  font-size: 1.55rem;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.18));
+  animation: penWiggle 0.35s infinite ease-in-out;
+  transition: top 0.35s ease, left 0.35s ease;
 }
