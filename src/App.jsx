@@ -4,35 +4,209 @@ import './App.css';
 const STORAGE_KEY = 'cikguai_user';
 
 const MODE_CONTENT = {
-  Topic: {
-    promptLabel: 'What topic would you like to learn?',
-    placeholder: "(e.g., 'Teach me about Kata Ganti Nama')",
-    chips: [
-      'Kata Ganti Nama',
-      'Imbuhan Awalan & Akhiran',
-      'Peribahasa & Simpulan Bahasa',
-      'Ayat Aktif & Ayat Pasif',
-      'Kata Sendi Nama',
-    ],
+  English: {
+    Topic: {
+      promptLabel: 'What topic would you like to learn?',
+      placeholder: "(e.g., 'Teach me about Kata Ganti Nama')",
+      chips: [
+        'Kata Ganti Nama',
+        'Imbuhan Awalan & Akhiran',
+        'Peribahasa & Simpulan Bahasa',
+        'Ayat Aktif & Ayat Pasif',
+        'Kata Sendi Nama',
+      ],
+    },
+    'Exam Prep': {
+      promptLabel: 'What topic would you like to review for your exam?',
+      placeholder: 'You can upload notes, a study guide, or an exam outline.',
+      chips: [
+        'Latihan Tatabahasa',
+        'Pemahaman Petikan Umum',
+        'Latihan Penjodoh Bilangan',
+        'Rumusan Bahasa Melayu',
+      ],
+    },
+    Homework: {
+      promptLabel: 'What homework problem would you like to help with?',
+      placeholder: 'You can copy and paste it, or upload a photo or file.',
+      chips: [
+        'Semak Karangan Pendek',
+        'Betulkan Kesalahan Ejaan & Imbuhan',
+        'Bina Ayat daripada Peribahasa',
+      ],
+    },
   },
-  'Exam Prep': {
-    promptLabel: 'What topic would you like to review for your exam?',
-    placeholder: 'You can upload notes, a study guide, or an exam outline.',
-    chips: [
-      'Latihan Tatabahasa',
-      'Pemahaman Petikan Umum',
-      'Latihan Penjodoh Bilangan',
-      'Rumusan Bahasa Melayu',
-    ],
+  'Bahasa Melayu': {
+    Topic: {
+      promptLabel: 'Topik apa yang anda ingin pelajari?',
+      placeholder: "(cth., 'Ajarkan saya tentang Kata Ganti Nama')",
+      chips: [
+        'Kata Ganti Nama',
+        'Imbuhan Awalan & Akhiran',
+        'Peribahasa & Simpulan Bahasa',
+        'Ayat Aktif & Ayat Pasif',
+        'Kata Sendi Nama',
+      ],
+    },
+    'Exam Prep': {
+      promptLabel: 'Topik apa yang anda mahu ulang kaji untuk peperiksaan?',
+      placeholder: 'Anda boleh muat naik nota, panduan belajar, atau rangka peperiksaan.',
+      chips: [
+        'Latihan Tatabahasa',
+        'Pemahaman Petikan Umum',
+        'Latihan Penjodoh Bilangan',
+        'Rumusan Bahasa Melayu',
+      ],
+    },
+    Homework: {
+      promptLabel: 'Soalan kerja rumah mana yang perlukan bantuan?',
+      placeholder: 'Anda boleh salin dan tampal, serta muat naik gambar atau fail.',
+      chips: [
+        'Semak Karangan Pendek',
+        'Betulkan Kesalahan Ejaan & Imbuhan',
+        'Bina Ayat daripada Peribahasa',
+      ],
+    },
   },
-  Homework: {
-    promptLabel: 'What homework problem would you like to help with?',
-    placeholder: 'You can copy and paste it, or upload a photo or file.',
-    chips: [
-      'Semak Karangan Pendek',
-      'Betulkan Kesalahan Ejaan & Imbuhan',
-      'Bina Ayat daripada Peribahasa',
-    ],
+};
+
+// Switch UI Language
+const UI_TEXT = {
+  English: {
+    // Navbar & Common
+    getPlan: 'Get your plan',
+    planSuffix: 'Plan',
+    settings: 'Settings',
+    back: '← Back',
+    continue: 'Continue',
+    cancel: 'Cancel',
+    save: 'Save',
+    // Page 5 Pricing
+    pricingTitle: 'Let’s get those grades',
+    pricingSub: 'A personal tutor, for less than what you spend on lunch',
+    weekly: 'Weekly',
+    monthly: 'Monthly',
+    annual: 'Annual',
+    humanTutor: 'Human Tutor',
+    bestDeal: 'Best Deal',
+    perWeek: '/ week',
+    perMonth: '/ month',
+    perYear: '/ year',
+    billedWeekly: 'RM9.90 billed weekly',
+    billedMonthly: 'RM29.90 billed monthly',
+    billedAnnually: 'RM199.90 billed annually',
+    save61: 'Save 61%',
+    perks: ['☑️ Unlimited Lessons', '☑️ No time limits', '☑️ All features'],
+    humanCons: ['❌ Awkward small talk', '❌ Scheduling nightmares', '❌ Can’t help at 2 am', '❌ Cancels on you'],
+    goWeekly: 'Go Weekly',
+    goMonthly: 'Go Monthly',
+    goAnnual: 'Go Annual',
+    dontDoThis: "Don't do this",
+    continueFree: 'Continue with Free Plan',
+    // Page 6 Topic Selection
+    newBoard: 'New Board',
+    allHistory: 'All History',
+    recentBoards: 'Recent Boards',
+    noBoards: 'No saved boards yet',
+    learnHeading: 'What do you want to learn,',
+    modes: { Topic: 'Topic', 'Exam Prep': 'Exam Prep', Homework: 'Homework' },
+    urlPlaceholder: 'Paste YouTube or article link here...',
+    attachedLabel: 'Attached:',
+    addFile: '📄 Add file',
+    addUrl: '🔗 Add URL',
+    startBtn: 'Start',
+    quickSuggestions: 'Quick Bahasa Melayu Suggestions',
+    // Page 7 Tutor
+    pickTutorTitle: 'Pick your favorite tutor',
+    pickTutorSub: 'You can change this anytime during the lesson',
+    marcelDesc: 'Warm and friendly',
+    rubyDesc: 'Energetic and fun',
+    // Page 9 Settings
+    settingsTitle: 'Settings',
+    nameLabel: 'Name',
+    nameSub: 'This is how we’ll call you',
+    emailLabel: 'Email',
+    emailSub: 'Your ID',
+    gradeLabel: 'Grade Level',
+    gradeSub: 'Used to navigate CikguAI',
+    langLabel: 'Preferred Language',
+    langSub: 'You speak this language',
+    speedLabel: 'Speech Speed',
+    speedSub: 'Tutor voice rate',
+    micLabel: 'Mic On by Default',
+    micSub: 'Auto-listen when tutor finishes speaking',
+    currentPlanLabel: 'Current Plan',
+    subscribe: 'Subscribe',
+    changePlan: 'Change Plan',
+    logOut: 'Log Out',
+  },
+  'Bahasa Melayu': {
+    // Navbar & Common
+    getPlan: 'Pilih pelan',
+    planSuffix: 'Pelan',
+    settings: 'Tetapan',
+    back: '← Kembali',
+    continue: 'Teruskan',
+    cancel: 'Batal',
+    save: 'Simpan',
+    // Page 5 Pricing
+    pricingTitle: 'Jom tingkatkan gred anda',
+    pricingSub: 'Tutor peribadi, lebih murah daripada belanja makan tengah hari',
+    weekly: 'Mingguan',
+    monthly: 'Bulanan',
+    annual: 'Tahunan',
+    humanTutor: 'Tutor Manusia',
+    bestDeal: 'Paling Berbaloi',
+    perWeek: '/ minggu',
+    perMonth: '/ bulan',
+    perYear: '/ tahun',
+    billedWeekly: 'RM9.90 dibilkan setiap minggu',
+    billedMonthly: 'RM29.90 dibilkan setiap bulan',
+    billedAnnually: 'RM199.90 dibilkan setiap tahun',
+    save61: 'Jimat 61%',
+    perks: ['☑️ Pelajaran Tanpa Had', '☑️ Tiada had masa', '☑️ Semua ciri dibuka'],
+    humanCons: ['❌ Bual kosong yang kekok', '❌ Susah atur jadual', '❌ Tak boleh bantu jam 2 pagi', '❌ Batalkan kelas saat akhir'],
+    goWeekly: 'Pilih Mingguan',
+    goMonthly: 'Pilih Bulanan',
+    goAnnual: 'Pilih Tahunan',
+    dontDoThis: 'Jangan pilih ini',
+    continueFree: 'Teruskan dengan Pelan Percuma',
+    // Page 6 Topic Selection
+    newBoard: 'Papan Baharu',
+    allHistory: 'Semua Sejarah',
+    recentBoards: 'Papan Terkini',
+    noBoards: 'Tiada papan disimpan lagi',
+    learnHeading: 'Apa yang anda mahu pelajari,',
+    modes: { Topic: 'Topik', 'Exam Prep': 'Ulang Kaji', Homework: 'Kerja Rumah' },
+    urlPlaceholder: 'Tampal pautan YouTube atau artikel di sini...',
+    attachedLabel: 'Dilampirkan:',
+    addFile: '📄 Tambah fail',
+    addUrl: '🔗 Tambah pautan',
+    startBtn: 'Mula',
+    quickSuggestions: 'Cadangan Pantas Bahasa Melayu',
+    // Page 7 Tutor
+    pickTutorTitle: 'Pilih tutor kegemaran anda',
+    pickTutorSub: 'Anda boleh tukar tutor bila-bila masa semasa belajar',
+    marcelDesc: 'Mesra dan tenang',
+    rubyDesc: 'Ceria dan bertenaga',
+    // Page 9 Settings
+    settingsTitle: 'Tetapan',
+    nameLabel: 'Nama',
+    nameSub: 'Nama panggilan anda',
+    emailLabel: 'E-mel',
+    emailSub: 'ID akaun anda',
+    gradeLabel: 'Tahap Pengajian',
+    gradeSub: 'Digunakan untuk menyesuaikan CikguAI',
+    langLabel: 'Bahasa Pilihan',
+    langSub: 'Bahasa utama anda',
+    speedLabel: 'Kelajuan Suara',
+    speedSub: 'Kadar percakapan tutor',
+    micLabel: 'Mikrofon Aktif Secara Lalai',
+    micSub: 'Auto-dengar selepas tutor selesai bercakap',
+    currentPlanLabel: 'Pelan Semasa',
+    subscribe: 'Langgan',
+    changePlan: 'Tukar Pelan',
+    logOut: 'Log Keluar',
   },
 };
 
@@ -53,10 +227,17 @@ export default function App() {
   const [speakingTutor, setSpeakingTutor] = useState(null); // 'Marcel' | 'Ruby' | null
   // Page 6 Collapsible History Sidebar State
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [recentBoards, setRecentBoards] = useState([
-    'Mastering Malay Affixes: Imbuhan',
-    'Kata Ganti Nama Diri & Tunjuk',
-  ]);
+  const [recentBoards, setRecentBoards] = useState(() => {
+    const saved = localStorage.getItem('cikgu_ai_recent_boards');
+    return saved ? JSON.parse(saved) : [
+      'Mastering Malay Affixes: Imbuhan',
+      'Kata Ganti Nama Diri & Tunjuk',
+    ];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('cikgu_ai_recent_boards', JSON.stringify(recentBoards));
+  }, [recentBoards]);
 
   // Page 9 Settings State
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -74,6 +255,9 @@ export default function App() {
     preferred_tutor: 'Marcel',
   });
 
+  const lang = userData.preferred_language === 'Bahasa Melayu' ? 'Bahasa Melayu' : 'English';
+  const t = UI_TEXT[lang];
+
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
@@ -87,6 +271,39 @@ export default function App() {
       }
     }
   }, []);
+  // Pre-load suara preview apabila masuk ke Page 7 supaya klik ▶ terus berbunyi tanpa delay
+  useEffect(() => {
+    if (step !== 7) return;
+    const isBM = userData.preferred_language === 'Bahasa Melayu';
+    const studentName =
+      userData.username && userData.username.trim().length > 1
+        ? userData.username.trim()
+        : isBM
+          ? 'kawan'
+          : 'there';
+
+    ['Marcel', 'Ruby'].forEach((tutorName) => {
+      const text =
+        tutorName === 'Marcel'
+          ? isBM
+            ? `Hai ${studentName}! Saya Cikgu Marcel. Jom kita belajar bersama hari ini!`
+            : `Hi ${studentName}! I'm Marcel. Let's break this down step by step!`
+          : isBM
+            ? `Helo ${studentName}! Saya Cikgu Ruby! Dah sedia nak kuasai topik hari ini?`
+            : `Hey ${studentName}! I'm Ruby! Ready to ace this topic together?`;
+
+      fetch('http://localhost:8000/api/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text,
+          tutor: tutorName,
+          language: userData.preferred_language,
+          speed: userData.speech_speed || 1.0,
+        }),
+      }).catch(() => { });
+    });
+  }, [step, userData.preferred_language, userData.speech_speed, userData.username]);
 
   const updateAndSave = (updates, nextStep) => {
     const updated = { ...userData, ...updates };
@@ -159,41 +376,84 @@ export default function App() {
     }, 600);
   };
 
-  // PAGE 7 Voice Preview + Talking Animation
-  const handlePreviewVoice = (e, tutorName) => {
+  // PAGE 7 Voice Preview + Talking Animation (Neural TTS)
+  const handlePreviewVoice = async (e, tutorName) => {
     e.stopPropagation();
     setSelectedTutor(tutorName);
 
+    // Hentikan audio/suara jika sedang bercakap
+    if (window.currentTutorAudio) {
+      window.currentTutorAudio.pause();
+      window.currentTutorAudio = null;
+    }
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+
     if (speakingTutor === tutorName) {
-      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
       setSpeakingTutor(null);
       return;
     }
 
     setSpeakingTutor(tutorName);
-
-    if (!('speechSynthesis' in window)) {
-      setTimeout(() => setSpeakingTutor(null), 2800);
-      return;
-    }
-
-    window.speechSynthesis.cancel();
     const isBM = userData.preferred_language === 'Bahasa Melayu';
+    const studentName =
+      userData.username && userData.username.trim().length > 1
+        ? userData.username.trim()
+        : isBM
+          ? 'kawan'
+          : 'there';
+
     const text =
       tutorName === 'Marcel'
         ? isBM
-          ? `Hai ${userData.username || 'kawan'}! Saya Cikgu Marcel. Jom kita belajar bersama hari ini!`
-          : `Hi ${userData.username || 'there'}! I'm Marcel. Let's break this down step by step!`
+          ? `Hai ${studentName}! Saya Cikgu Marcel. Jom kita belajar bersama hari ini!`
+          : `Hi ${studentName}! I'm Marcel. Let's break this down step by step!`
         : isBM
-          ? `Helo ${userData.username || 'kawan'}! Saya Cikgu Ruby! Dah sedia nak kuasai topik hari ini?`
-          : `Hey ${userData.username || 'there'}! I'm Ruby! Ready to ace this topic together?`;
+          ? `Helo ${studentName}! Saya Cikgu Ruby! Dah sedia nak kuasai topik hari ini?`
+          : `Hey ${studentName}! I'm Ruby! Ready to ace this topic together?`;
 
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = userData.speech_speed || 1.0;
-    utterance.pitch = tutorName === 'Ruby' ? 1.2 : 0.95;
-    utterance.onend = () => setSpeakingTutor(null);
-    utterance.onerror = () => setSpeakingTutor(null);
-    window.speechSynthesis.speak(utterance);
+    try {
+      const res = await fetch('http://localhost:8000/api/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text,
+          tutor: tutorName,
+          language: userData.preferred_language,
+          speed: userData.speech_speed || 1.0,
+        }),
+      });
+
+      if (!res.ok) throw new Error('TTS server error');
+
+      const blob = await res.blob();
+      const audioUrl = URL.createObjectURL(blob);
+      const audio = new Audio(audioUrl);
+      window.currentTutorAudio = audio;
+
+      audio.onended = () => {
+        setSpeakingTutor(null);
+        URL.revokeObjectURL(audioUrl);
+      };
+      audio.onerror = () => {
+        setSpeakingTutor(null);
+        URL.revokeObjectURL(audioUrl);
+      };
+
+      await audio.play();
+    } catch (err) {
+      // Fallback jika server Python belum dijalankan
+      if (!('speechSynthesis' in window)) {
+        setSpeakingTutor(null);
+        return;
+      }
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = isBM ? 'ms-MY' : 'en-US';
+      utterance.rate = userData.speech_speed || 1.0;
+      utterance.pitch = tutorName === 'Ruby' ? 1.15 : 0.95;
+      utterance.onend = () => setSpeakingTutor(null);
+      utterance.onerror = () => setSpeakingTutor(null);
+      window.speechSynthesis.speak(utterance);
+    }
   };
 
   // PAGE 9 Settings
@@ -246,10 +506,23 @@ export default function App() {
           onClick={() => setStep(5)}
           title="Change subscription plan"
         >
-          {userData.subscription_plan || 'Free'} Plan
+          {userData.subscription_plan || 'Free'} {t.planSuffix}
+        </button>
+        <button
+          type="button"
+          className="icon-btn"
+          title="Switch Language / Tukar Bahasa"
+          onClick={() =>
+            updateAndSave({
+              preferred_language:
+                lang === 'Bahasa Melayu' ? 'English' : 'Bahasa Melayu',
+            })
+          }
+        >
+          🌐 {lang === 'Bahasa Melayu' ? 'BM' : 'EN'}
         </button>
         <button type="button" className="icon-btn" onClick={openSettings}>
-          Settings
+          {t.settings}
         </button>
       </div>
     </header>
@@ -262,7 +535,7 @@ export default function App() {
       <div className="modal-backdrop">
         <form className="settings-modal" onSubmit={handleSaveSettings}>
           <div className="settings-header">
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 800 }}>Settings</h2>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 800 }}>{t.settingsTitle}</h2>
             <button
               type="button"
               className="btn-secondary"
@@ -275,8 +548,8 @@ export default function App() {
 
           <div className="settings-row">
             <div className="settings-row-info">
-              <h4>Name</h4>
-              <p>This is how we’ll call you</p>
+              <h4>{t.nameLabel}</h4>
+              <p>{t.nameSub}</p>
             </div>
             <input
               type="text"
@@ -289,8 +562,8 @@ export default function App() {
 
           <div className="settings-row">
             <div className="settings-row-info">
-              <h4>Email</h4>
-              <p>Your ID</p>
+              <h4>{t.emailLabel}</h4>
+              <p>{t.emailSub}</p>
             </div>
             <input
               type="email"
@@ -303,8 +576,8 @@ export default function App() {
 
           <div className="settings-row">
             <div className="settings-row-info">
-              <h4>Grade Level</h4>
-              <p>Used to navigate CikguAI</p>
+              <h4>{t.gradeLabel}</h4>
+              <p>{t.gradeSub}</p>
             </div>
             <select
               className="input-field settings-control"
@@ -319,8 +592,8 @@ export default function App() {
 
           <div className="settings-row">
             <div className="settings-row-info">
-              <h4>Preferred Language</h4>
-              <p>You speak this language</p>
+              <h4>{t.langLabel}</h4>
+              <p>{t.langSub}</p>
             </div>
             <select
               className="input-field settings-control"
@@ -336,8 +609,10 @@ export default function App() {
 
           <div className="settings-row">
             <div className="settings-row-info">
-              <h4>Speech Speed</h4>
-              <p>Tutor voice rate ({settingsDraft.speech_speed}x)</p>
+              <h4>{t.speedLabel}</h4>
+              <p>
+                {t.speedSub} ({settingsDraft.speech_speed}x)
+              </p>
             </div>
             <div
               className="settings-control"
@@ -365,8 +640,8 @@ export default function App() {
 
           <div className="settings-row">
             <div className="settings-row-info">
-              <h4>Mic On by Default</h4>
-              <p>Auto-listen when tutor finishes speaking</p>
+              <h4>{t.micLabel}</h4>
+              <p>{t.micSub}</p>
             </div>
             <label className="switch">
               <input
@@ -382,8 +657,10 @@ export default function App() {
 
           <div className="settings-row" style={{ borderBottom: 'none' }}>
             <div className="settings-row-info">
-              <h4>Current Plan</h4>
-              <p>{settingsDraft.subscription_plan || 'Free'} Plan</p>
+              <h4>{t.currentPlanLabel}</h4>
+              <p>
+                {settingsDraft.subscription_plan || 'Free'} {t.planSuffix}
+              </p>
             </div>
             <button
               type="button"
@@ -394,7 +671,7 @@ export default function App() {
                 setStep(5);
               }}
             >
-              {settingsDraft.subscription_plan === 'Free' ? 'Subscribe' : 'Change Plan'}
+              {settingsDraft.subscription_plan === 'Free' ? t.subscribe : t.changePlan}
             </button>
           </div>
 
@@ -420,7 +697,7 @@ export default function App() {
                 cursor: 'pointer',
               }}
             >
-              Log Out
+              {t.logOut}
             </button>
 
             <div className="btn-row" style={{ width: 'auto', marginTop: 0 }}>
@@ -429,10 +706,10 @@ export default function App() {
                 className="btn-secondary"
                 onClick={() => setIsSettingsOpen(false)}
               >
-                Cancel
+                {t.cancel}
               </button>
               <button type="submit" className="btn-primary" style={{ width: 'auto' }}>
-                Save
+                {t.save}
               </button>
             </div>
           </div>
@@ -632,14 +909,14 @@ export default function App() {
           <p className="helper">Pick the language you would like to speak to the whiteboard tutor.</p>
 
           <div className="option-list">
-            {languages.map((lang) => (
+            {languages.map((langOption) => (
               <button
                 type="button"
-                key={lang}
-                className={`option-pill ${userData.preferred_language === lang ? 'selected' : ''}`}
-                onClick={() => setUserData({ ...userData, preferred_language: lang })}
+                key={langOption}
+                className={`option-pill ${userData.preferred_language === langOption ? 'selected' : ''}`}
+                onClick={() => setUserData({ ...userData, preferred_language: langOption })}
               >
-                {lang}
+                {langOption}
               </button>
             ))}
           </div>
@@ -663,86 +940,86 @@ export default function App() {
       <div className="pricing-page">
         <div className="pricing-top-left">
           <button type="button" className="icon-btn" onClick={() => setStep(4)}>
-            ← Back
+            {t.back}
           </button>
         </div>
 
         <div className="pricing-center-content">
           <div className="pricing-header">
-            <h1>Let’s get those grades</h1>
-            <p>A personal tutor, for less than what you spend on lunch</p>
+            <h1>{t.pricingTitle}</h1>
+            <p>{t.pricingSub}</p>
           </div>
 
           <div className="pricing-grid">
             <div className="price-card">
-              <div className="plan-title">Weekly</div>
+              <div className="plan-title">{t.weekly}</div>
               <div className="plan-price">
-                MYR14.90 <span>/ week</span>
+                RM9.90 <span>{t.perWeek}</span>
               </div>
-              <span className="food-badge">🍱 Lunch set</span>
+              <span className="food-badge">🧋 One bubble tea</span>
               <ul className="perk-list">
-                <li>☑️ Unlimited Lessons</li>
-                <li>☑️ No time limits</li>
-                <li>☑️ All features</li>
+                {t.perks.map((perk, idx) => (
+                  <li key={idx}>{perk}</li>
+                ))}
               </ul>
-              <div className="plan-billing-bottom">MYR14.90 billed weekly</div>
+              <div className="plan-billing-bottom">{t.billedWeekly}</div>
               <button
                 type="button"
                 className="btn-pill"
                 onClick={() =>
                   setCheckoutPlan({
                     name: 'Weekly',
-                    price: 'MYR 14.90',
+                    price: 'RM 9.90',
                     billing: 'Billed weekly (Dummy)',
                   })
                 }
               >
-                Go Weekly
+                {t.goWeekly}
               </button>
             </div>
 
             <div className="price-card">
-              <div className="plan-title">Monthly</div>
+              <div className="plan-title">{t.monthly}</div>
               <div className="plan-price">
-                MYR9.98 <span>/ week</span>
+                RM29.90 <span>{t.perMonth}</span>
               </div>
-              <span className="food-badge">🧋 One boba milk</span>
+              <span className="food-badge">🍣 One sushi lunch sets</span>
               <ul className="perk-list">
-                <li>☑️ Unlimited Lessons</li>
-                <li>☑️ No time limits</li>
-                <li>☑️ All features</li>
+                {t.perks.map((perk, idx) => (
+                  <li key={idx}>{perk}</li>
+                ))}
               </ul>
-              <div className="plan-billing-bottom">MYR39.90 billed monthly</div>
+              <div className="plan-billing-bottom">{t.billedMonthly}</div>
               <button
                 type="button"
                 className="btn-pill"
                 onClick={() =>
                   setCheckoutPlan({
                     name: 'Monthly',
-                    price: 'MYR 39.90',
+                    price: 'RM 29.90',
                     billing: 'Billed monthly (Dummy)',
                   })
                 }
               >
-                Go Monthly
+                {t.goMonthly}
               </button>
             </div>
 
             <div className="price-card best-deal">
-              <div className="deal-badge">Best Deal</div>
-              <div className="plan-title">Annual</div>
+              <div className="deal-badge">{t.bestDeal}</div>
+              <div className="plan-title">{t.annual}</div>
               <div className="plan-price">
-                MYR2.88 <span>/ week</span>
+                RM199.90 <span>{t.perYear}</span>
               </div>
-              <span className="food-badge">🍛 One nasi lemak</span>
+              <span className="food-badge">🍚 One lunch set per month</span>
               <ul className="perk-list">
-                <li>☑️ Unlimited Lessons</li>
-                <li>☑️ No time limits</li>
-                <li>☑️ All features</li>
+                {t.perks.map((perk, idx) => (
+                  <li key={idx}>{perk}</li>
+                ))}
               </ul>
               <div className="plan-billing-bottom">
-                <span className="save-tag">Save 81%</span>
-                MYR150 billed annually
+                <span className="save-tag">{t.save61}</span>
+                {t.billedAnnually}
               </div>
               <button
                 type="button"
@@ -750,34 +1027,33 @@ export default function App() {
                 onClick={() =>
                   setCheckoutPlan({
                     name: 'Annual',
-                    price: 'MYR 150.00',
+                    price: 'RM 199.90',
                     billing: 'Billed annually (Dummy)',
                   })
                 }
               >
-                Go Annual
+                {t.goAnnual}
               </button>
             </div>
 
             <div className="price-card muted-card">
-              <div className="plan-title">Human Tutor</div>
+              <div className="plan-title">{t.humanTutor}</div>
               <div className="plan-price strikethrough-main">
-                MYR250.00 <span>/ month</span>
+                RM250.00
               </div>
               <ul className="perk-list">
-                <li>❌ Awkward small talk</li>
-                <li>❌ Scheduling nightmares</li>
-                <li>❌ Can’t help at 2 am</li>
-                <li>❌ Cancels on you</li>
+                {t.humanCons.map((con, idx) => (
+                  <li key={idx}>{con}</li>
+                ))}
               </ul>
               <button type="button" className="btn-pill-disabled" disabled>
-                Don't do this
+                {t.dontDoThis}
               </button>
             </div>
           </div>
 
           <button type="button" className="free-plan-link" onClick={handleSelectFreePlan}>
-            Continue with Free Plan
+            {t.continueFree}
           </button>
         </div>
 
@@ -838,7 +1114,7 @@ export default function App() {
                     onClick={() => setCheckoutPlan(null)}
                     disabled={isProcessing}
                   >
-                    Cancel
+                    {t.cancel}
                   </button>
                   <button type="submit" className="btn-primary" disabled={isProcessing}>
                     {isProcessing ? 'Confirming...' : `Pay ${checkoutPlan.price} (Dummy)`}
@@ -854,7 +1130,7 @@ export default function App() {
 
   // ==================== PAGE 6: TOPIC SELECTION ====================
   if (step === 6) {
-    const activeModeData = MODE_CONTENT[learningMode];
+    const activeModeData = MODE_CONTENT[lang][learningMode];
     const handleStartTopic = (e) => {
       e.preventDefault();
       if (!topicInput.trim() && !attachedFileName && !attachedUrl.trim()) {
@@ -904,32 +1180,67 @@ export default function App() {
                 setIsSidebarOpen(false);
               }}
             >
-              <span>📝</span> New Board
+              <span>📝</span> {t.newBoard}
             </button>
 
             <button
               type="button"
               className="sidebar-nav-btn"
-              onClick={() => alert(`Total saved boards: ${recentBoards.length}`)}
+              onClick={() => alert(`${t.allHistory}: ${recentBoards.length}`)}
             >
-              <span>🕒</span> All History
+              <span>🕒</span> {t.allHistory}
             </button>
 
-            <div className="sidebar-section-label">Recent Boards</div>
-            {recentBoards.map((board, idx) => (
-              <button
-                type="button"
-                key={idx}
-                className="sidebar-recent-item"
-                title={board}
-                onClick={() => {
-                  setTopicInput(board);
-                  setIsSidebarOpen(false);
-                }}
-              >
-                {board}
-              </button>
-            ))}
+            <div className="sidebar-section-label">{t.recentBoards}</div>
+            {recentBoards.length === 0 ? (
+              <p style={{ fontSize: '0.8rem', color: '#94a3b8', padding: '0.4rem 0.75rem' }}>
+                {t.noBoards}
+              </p>
+            ) : (
+              recentBoards.map((board, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '0.35rem',
+                  }}
+                >
+                  <button
+                    type="button"
+                    className="sidebar-recent-item"
+                    style={{ flex: 1, marginBottom: 0 }}
+                    title={board}
+                    onClick={() => {
+                      setTopicInput(board);
+                      setIsSidebarOpen(false);
+                    }}
+                  >
+                    {board}
+                  </button>
+                  <button
+                    type="button"
+                    title="Delete board"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setRecentBoards((prev) => prev.filter((_, i) => i !== idx));
+                    }}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#94a3b8',
+                      cursor: 'pointer',
+                      padding: '0.35rem 0.5rem',
+                      fontSize: '0.85rem',
+                      borderRadius: '6px',
+                    }}
+                  >
+                    X
+                  </button>
+                </div>
+              ))
+            )}
           </aside>
         )}
 
@@ -959,10 +1270,23 @@ export default function App() {
               className="plan-pill-badge"
               onClick={() => setStep(5)}
             >
-              Get your plan
+              {t.getPlan}
+            </button>
+            <button
+              type="button"
+              className="icon-btn"
+              title="Switch Language / Tukar Bahasa"
+              onClick={() =>
+                updateAndSave({
+                  preferred_language:
+                    lang === 'Bahasa Melayu' ? 'English' : 'Bahasa Melayu',
+                })
+              }
+            >
+              🌐 {lang === 'Bahasa Melayu' ? 'BM' : 'EN'}
             </button>
             <button type="button" className="icon-btn" onClick={openSettings}>
-              Settings
+              {t.settings}
             </button>
           </div>
         </header>
@@ -970,7 +1294,10 @@ export default function App() {
         {/* Vertically & Horizontally Centered Prompt Section */}
         <div className="topic-center-wrapper">
           <h1 className="topic-heading">
-            What do you want to <strong>learn, {userData.username}?</strong>
+            {t.learnHeading}{' '}
+            <strong style={{ textTransform: 'capitalize' }}>
+              {userData.username || 'Student'}?
+            </strong>
           </h1>
 
           {/* 3 Separate Floating Mode Cards */}
@@ -986,7 +1313,7 @@ export default function App() {
                 }}
               >
                 <span className="mode-card-icon">{modeIcons[mode]}</span>
-                <span>{mode}</span>
+                <span>{t.modes[mode]}</span>
               </button>
             ))}
           </div>
@@ -1006,7 +1333,7 @@ export default function App() {
                   type="url"
                   className="input-field"
                   style={{ fontSize: '0.88rem', padding: '0.6rem 0.85rem' }}
-                  placeholder="Paste YouTube or article link here..."
+                  placeholder={t.urlPlaceholder}
                   value={attachedUrl}
                   onChange={(e) => setAttachedUrl(e.target.value)}
                 />
@@ -1022,7 +1349,7 @@ export default function App() {
                   fontWeight: 600,
                 }}
               >
-                Attached: {attachedFileName}{' '}
+                {t.attachedLabel} {attachedFileName}{' '}
                 <button
                   type="button"
                   onClick={() => setAttachedFileName('')}
@@ -1048,7 +1375,7 @@ export default function App() {
             <div className="cikgu-card-footer">
               <div className="box-left-actions">
                 <label className="cikgu-attach-pill">
-                  📄 Add file
+                  {t.addFile}
                   <input
                     type="file"
                     accept="image/*,.pdf,.doc,.docx"
@@ -1066,7 +1393,7 @@ export default function App() {
                   className="cikgu-attach-pill"
                   onClick={() => setShowUrlInput(!showUrlInput)}
                 >
-                  🔗 Add URL
+                  {t.addUrl}
                 </button>
               </div>
 
@@ -1075,14 +1402,14 @@ export default function App() {
                 className={`cikgu-start-btn ${topicInput.trim() || attachedFileName || attachedUrl.trim() ? 'ready' : ''
                   }`}
               >
-                Start
+                {t.startBtn}
               </button>
             </div>
           </form>
 
           {/* Quick Bahasa Melayu Suggestions */}
           <div className="subject-chips-wrap" style={{ width: '100%' }}>
-            <div className="subject-chips-title">Quick Bahasa Melayu Suggestions</div>
+            <div className="subject-chips-title">{t.quickSuggestions}</div>
             <div className="subject-chips">
               {activeModeData.chips.map((chip) => (
                 <button
@@ -1126,20 +1453,33 @@ export default function App() {
               onClick={() => setStep(5)}
               title="Change subscription plan"
             >
-              {userData.subscription_plan || 'Free'} Plan
+              {userData.subscription_plan || 'Free'} {t.planSuffix}
+            </button>
+            <button
+              type="button"
+              className="icon-btn"
+              title="Switch Language / Tukar Bahasa"
+              onClick={() =>
+                updateAndSave({
+                  preferred_language:
+                    lang === 'Bahasa Melayu' ? 'English' : 'Bahasa Melayu',
+                })
+              }
+            >
+              🌐 {lang === 'Bahasa Melayu' ? 'BM' : 'EN'}
             </button>
             <button type="button" className="icon-btn" onClick={openSettings}>
-              Settings
+              {t.settings}
             </button>
           </div>
         </header>
 
         <div className="topic-center-wrapper" style={{ maxWidth: '640px' }}>
           <h1 style={{ fontSize: '2rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.4rem' }}>
-            Pick your favorite tutor
+            {t.pickTutorTitle}
           </h1>
           <p style={{ color: '#64748b', marginBottom: '1.75rem' }}>
-            You can change this anytime during the lesson
+            {t.pickTutorSub}
           </p>
 
           <div className="tutor-grid" style={{ marginTop: 0 }}>
@@ -1149,7 +1489,7 @@ export default function App() {
               onClick={() => setSelectedTutor('Marcel')}
             >
               <h3>Marcel</h3>
-              <p>Warm and friendly</p>
+              <p>{t.marcelDesc}</p>
               <div className="avatar-wrapper" style={{ width: '160px', height: '155px' }}>
                 <svg
                   viewBox="0 0 160 155"
@@ -1306,7 +1646,7 @@ export default function App() {
               onClick={() => setSelectedTutor('Ruby')}
             >
               <h3>Ruby</h3>
-              <p>Energetic and fun</p>
+              <p>{t.rubyDesc}</p>
               <div className="avatar-wrapper" style={{ width: '160px', height: '155px' }}>
                 <svg
                   viewBox="0 0 160 155"
@@ -1441,7 +1781,7 @@ export default function App() {
             style={{ maxWidth: '420px', margin: '0 auto', justifyContent: 'center' }}
           >
             <button type="button" className="btn-secondary" onClick={() => setStep(6)}>
-              ← Back
+              {t.back}
             </button>
             <button
               type="button"
@@ -1452,7 +1792,7 @@ export default function App() {
                 updateAndSave({ preferred_tutor: selectedTutor }, 8);
               }}
             >
-              Continue
+              {t.continue}
             </button>
           </div>
         </div>
@@ -1461,6 +1801,7 @@ export default function App() {
       </div>
     );
   }
+
   // ==================== PAGE 8 PLACEHOLDER ====================
   return (
     <div className="workspace-page">
