@@ -1497,8 +1497,305 @@ input:checked+.slider-round:before {
   position: fixed;
   z-index: 450;
   pointer-events: none;
-  font-size: 1.55rem;
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.18));
-  animation: penWiggle 0.35s infinite ease-in-out;
-  transition: top 0.35s ease, left 0.35s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: top 0.1s linear, left 0.1s linear;
+}
+
+.cikguai-red-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ef4444;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.25);
+  display: inline-block;
+}
+
+/* ==================== MODERN CIKGUAI LOGIN SHOWCASE ==================== */
+.btn-studdy-pill {
+  width: 100%;
+  padding: 0.85rem 1.25rem;
+  border-radius: 999px;
+  border: 1.5px solid #e2e8f0;
+  background: #ffffff;
+  color: #0f172a;
+  font-weight: 600;
+  font-size: 0.92rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-studdy-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.09);
+}
+
+.btn-studdy-pill.primary {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+.studdy-input {
+  border-radius: 999px !important;
+  padding: 0.78rem 1.15rem !important;
+  font-size: 0.9rem !important;
+  border: 1.5px solid #e2e8f0 !important;
+  background: #f8fafc !important;
+}
+
+.studdy-input:focus {
+  background: #ffffff !important;
+  border-color: #7c98f5 !important;
+}
+
+/* Gradient Warna Logo CikguAI (Periwinkle Blue -> Orchid Pink) */
+.cikguai-brand-panel {
+  background: linear-gradient(125deg, #dce5ff 0%, #ede4ff 52%, #fce1ef 100%) !important;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.showcase-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 550px;
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+}
+
+/* Bingkai Laptop Mini */
+.mini-laptop-frame {
+  width: 355px;
+  position: relative;
+  z-index: 1;
+}
+
+.mini-laptop-screen {
+  background: #ffffff;
+  border: 6px solid #0f172a;
+  border-bottom-width: 10px;
+  border-radius: 16px 16px 4px 4px;
+  padding: 0.75rem 0.9rem;
+  box-shadow: 0 20px 45px rgba(124, 152, 245, 0.22);
+  font-family: 'Caveat', cursive, sans-serif;
+  color: #1e293b;
+}
+
+.mini-board-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.45rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.mini-board-grid {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mini-board-visual {
+  flex-shrink: 0;
+  border-right: 1px dashed #e2e8f0;
+  padding-right: 0.35rem;
+}
+
+.mini-board-notes {
+  flex: 1;
+  min-width: 0;
+}
+
+.mini-board-title {
+  display: inline-block;
+  background: #fef08a;
+  padding: 1px 8px;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.mini-board-line {
+  font-size: 0.88rem;
+  margin-bottom: 0.4rem;
+  color: #334155;
+  line-height: 1.2;
+}
+
+.mini-board-formula {
+  font-size: 0.92rem;
+  color: #2563eb;
+  margin: 0.45rem 0;
+}
+
+.mini-red-circle {
+  border: 1.8px solid #ef4444;
+  border-radius: 999px;
+  padding: 0px 6px;
+  color: #0f172a;
+}
+
+.mini-board-footer {
+  margin-top: 0.55rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: system-ui, sans-serif;
+}
+
+.mini-avatar-dot {
+  font-size: 0.82rem;
+  background: #eff6ff;
+  border-radius: 50%;
+  padding: 2px 4px;
+}
+
+.mini-input-bar {
+  font-size: 0.64rem;
+  color: #94a3b8;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  padding: 2px 9px;
+  flex: 1;
+}
+
+.mini-laptop-base {
+  height: 10px;
+  width: 391px;
+  margin-left: -18px;
+  background: linear-gradient(180deg, #cbd5e1 0%, #94a3b8 100%);
+  border-radius: 0 0 12px 12px;
+}
+
+/* 3 Kad Putih Terapung */
+.floating-feature-stack {
+  position: relative;
+  z-index: 2;
+  margin-left: -65px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.floating-white-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 0.8rem 1.05rem;
+  width: 250px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  transition: transform 0.2s ease;
+}
+
+.floating-white-card:hover {
+  transform: translateX(4px);
+}
+
+.floating-card-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.floating-white-card h4 {
+  margin: 0 0 0.12rem;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.floating-white-card p {
+  margin: 0;
+  font-size: 0.72rem;
+  color: #64748b;
+  line-height: 1.3;
+}
+
+/* ==================== COMPACT SETTINGS MODAL & Z-INDEX FIX ==================== */
+.modal-backdrop {
+  z-index: 1000 !important;
+  padding: 1rem !important;
+}
+
+.settings-modal {
+  max-width: 500px !important;
+  max-height: 85vh !important;
+  overflow-y: auto !important;
+  padding: 1.35rem 1.65rem !important;
+  border-radius: 22px !important;
+}
+
+.settings-header {
+  margin-bottom: 0.75rem !important;
+}
+
+.settings-header h2 {
+  font-size: 1.25rem !important;
+}
+
+.settings-row {
+  padding: 0.65rem 0 !important;
+}
+
+.settings-row-info h4 {
+  font-size: 0.88rem !important;
+  margin-bottom: 0.1rem !important;
+}
+
+.settings-row-info p {
+  font-size: 0.76rem !important;
+}
+
+.settings-control {
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.85rem !important;
+}
+
+/* 1. Buang garisan bingkai pada SEMUA bentuk geo terlebih dahulu */
+.cikguai-board-wrapper .tl-shape[data-shape-type="geo"] path,
+.cikguai-board-wrapper .tl-shape[data-shape-type="geo"] rect {
+  stroke: none !important;
+}
+
+/* 2. Hidupkan semula garisan merah HANYA apabila shape geo tidak mempunyai warna latar (fill="none" pada lapisan pertama) */
+.cikguai-board-wrapper .tl-shape[data-shape-type="geo"] svg > g > path:only-child,
+.cikguai-board-wrapper .tl-shape[data-shape-type="geo"] svg > path:only-child {
+  stroke: #ef4444 !important;
+  stroke-width: 2.2px !important;
+}
+
+/* 3. Kunci warna latar highlight kuning & biru lembut */
+.cikguai-board-wrapper .tl-shape[data-shape-type="geo"] [fill*="yellow"],
+.cikguai-board-wrapper .tl-shape[data-shape-type="geo"] [fill="#f1ac4b"],
+.cikguai-board-wrapper .tl-shape[data-shape-type="geo"] [fill="#f8d57e"] {
+  fill: #fef08a !important;
+}
+
+.cikguai-board-wrapper .tl-shape[data-shape-type="geo"] [fill*="light-blue"] {
+  fill: #bae6fd !important;
 }

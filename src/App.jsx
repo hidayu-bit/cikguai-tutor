@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './App.css';
-import { Tldraw, toRichText, createShapeId } from 'tldraw';
+import { Tldraw, toRichText, createShapeId, AssetRecordType } from 'tldraw';
 import 'tldraw/tldraw.css';
+import curriculumKB from './data/curriculum_kb.json';
+import { generateWhiteboardLesson } from './services/aiTutor';
 
 const STORAGE_KEY = 'cikguai_user';
 
@@ -226,7 +228,10 @@ export default function App() {
   const [showTranscript, setShowTranscript] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [studentReply, setStudentReply] = useState('');
+  const [chatHistory, setChatHistory] = useState([]);
+  const [boardTurnCount, setBoardTurnCount] = useState(0);
   const [hasStartedWriting, setHasStartedWriting] = useState(false);
+  const isWritingRef = useRef(false);
   const [isFollowingTutor, setIsFollowingTutor] = useState(true);
 
   // Page 6 Collapsible History Sidebar State
@@ -447,17 +452,18 @@ export default function App() {
 
       await audio.play();
     } catch {
-      if (!('speechSynthesis' in window)) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = isBM ? 'ms-MY' : 'en-US';
+        utterance.rate = userData.speech_speed || 1.0;
+        utterance.pitch = selectedTutor === 'Ruby' ? 1.15 : 0.95;
+        utterance.onend = () => setSpeakingTutor(null);
+        utterance.onerror = () => setSpeakingTutor(null);
+        window.speechSynthesis.speak(utterance);
+      } else {
         setSpeakingTutor(null);
-        return;
       }
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = isBM ? 'ms-MY' : 'en-US';
-      utterance.rate = userData.speech_speed || 1.0;
-      utterance.pitch = tutorName === 'Ruby' ? 1.15 : 0.95;
-      utterance.onend = () => setSpeakingTutor(null);
-      utterance.onerror = () => setSpeakingTutor(null);
-      window.speechSynthesis.speak(utterance);
     }
   };
 
@@ -546,13 +552,16 @@ export default function App() {
               <p>{t.gradeSub}</p>
             </div>
             <select
-              className="input-field settings-control"
-              value={settingsDraft.grade_level}
-              onChange={(e) => setSettingsDraft({ ...settingsDraft, grade_level: e.target.value })}
+              className="settings-control"
+              value={userData.grade_level}
+              onChange={(e) => setUserData({ ...userData, grade_level: e.target.value })}
             >
-              <option value="Primary Student">Primary Student</option>
-              <option value="Secondary Student">Secondary Student</option>
-              <option value="Not a student">Not a student</option>
+              <option value="Bridge & Lower Secondary (Age 12–15 / Std 6 – Form 3)">
+                Bridge & Lower Secondary (Age 12–15 / Std 6 – Form 3)
+              </option>
+              <option value="Upper Secondary (Age 16–17 / Form 4–5 SPM)">
+                Upper Secondary (Age 16–17 / Form 4–5 SPM)
+              </option>
             </select>
           </div>
 
@@ -688,68 +697,170 @@ export default function App() {
   if (step === 1) {
     return (
       <div className="split-container">
+        {/* Bucu Kiri Atas: Logo CikguAI */}
+        <div
+          className="brand-logo"
+          style={{
+            position: 'fixed',
+            top: '24px',
+            left: '32px',
+            marginBottom: 0,
+            zIndex: 20,
+            fontSize: '1.35rem',
+          }}
+        >
+          CikguAI
+        </div>
+
+        {/* PANEL KIRI */}
         <div className="left-panel">
-          <div className="auth-box">
-            <div className="brand-logo">CikguAI</div>
-            <h1>Be a Top Student, today!</h1>
-            <p className="subtitle">
+          <div className="auth-box" style={{ textAlign: 'center', maxWidth: '370px' }}>
+            <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.5rem' }}>
+              Be a Top Student, today!
+            </h1>
+            <p className="subtitle" style={{ fontSize: '0.9rem', color: '#64748b', marginBottom: '1.75rem' }}>
               Join top Malaysian students using CikguAI to stress less and learn faster.
             </p>
 
             <button
               type="button"
-              className="btn-google"
+              className="btn-studdy-pill"
               onClick={() =>
-                alert('Google OAuth will be connected in Week 5! Use Email below for now.')
+                alert('Google OAuth will be connected soon! Use Email below for now.')
               }
             >
-              <span>G</span> Continue with Google
+              <span style={{ fontWeight: 800, color: '#2766e4' }}>G</span> Continue with Google
             </button>
 
-            <div className="divider">OR</div>
+            <div className="divider" style={{ margin: '1.25rem 0', fontSize: '0.75rem' }}>
+              OR
+            </div>
 
-            <form onSubmit={handleEmailLogin}>
-              <div className="form-group">
-                <label>Email Address</label>
+            <form onSubmit={handleEmailLogin} style={{ textAlign: 'left' }}>
+              <div className="form-group" style={{ marginBottom: '0.75rem' }}>
                 <input
                   type="email"
-                  className="input-field"
+                  className="input-field studdy-input"
                   placeholder="student@example.com"
                   value={userData.email}
                   onChange={(e) => setUserData({ ...userData, email: e.target.value })}
                 />
               </div>
 
-              <div className="form-group">
-                <label>Password</label>
+              <div className="form-group" style={{ marginBottom: '1rem' }}>
                 <input
                   type="password"
-                  className="input-field"
+                  className="input-field studdy-input"
                   placeholder="Enter password"
                 />
               </div>
 
-              {error && <p className="error-text">{error}</p>}
+              {error && <p className="error-text" style={{ textAlign: 'center' }}>{error}</p>}
 
-              <button type="submit" className="btn-primary">
+              <button type="submit" className="btn-studdy-pill primary">
                 Continue with Email
               </button>
             </form>
+
+            <p style={{ fontSize: '0.74rem', color: '#94a3b8', marginTop: '1.25rem', lineHeight: 1.4 }}>
+              By continuing, you agree to our{' '}
+              <span style={{ color: '#7c98f5', cursor: 'pointer', fontWeight: 600 }}>Terms and Privacy Policy</span>
+            </p>
           </div>
         </div>
 
-        <div className="right-panel">
-          <div className="feature-card">
-            <h3>📚 Learn any topic</h3>
-            <p>Use your own school notes or ask CikguAI to write step-by-step on the board.</p>
-          </div>
-          <div className="feature-card">
-            <h3>📝 Prepare for exam</h3>
-            <p>Review school syllabus topics and practice with interactive clue highlights.</p>
-          </div>
-          <div className="feature-card">
-            <h3>💡 Help with homework</h3>
-            <p>Snap a worksheet photo and learn how to solve it step by step.</p>
+        {/* PANEL KANAN: Gradient Warna Logo CikguAI + Mini Laptop Bergambar + Kad Terapung */}
+        <div className="right-panel cikguai-brand-panel">
+          <div className="showcase-wrapper">
+            {/* Bingkai Laptop Mini Papan Putih CikguAI */}
+            <div className="mini-laptop-frame">
+              <div className="mini-laptop-screen">
+                {/* Bar Atas Papan Putih */}
+                <div className="mini-board-topbar">
+                  <span style={{ fontSize: '0.62rem', fontWeight: 700, color: '#7c98f5', fontFamily: 'system-ui' }}>
+                    ← CikguAI
+                  </span>
+                  <span style={{ fontSize: '0.6rem', color: '#94a3b8', fontFamily: 'system-ui' }}>
+                    ↻ BM ⚙️
+                  </span>
+                </div>
+
+                {/* Kandungan Papan Putih 2-Lajur dengan Rajah Visual Macam Studdy */}
+                <div className="mini-board-grid">
+                  {/* Lajur Kiri: Rajah Carta Pai & Peta Minda Lukisan Tangan */}
+                  <div className="mini-board-visual">
+                    <svg viewBox="0 0 110 115" width="95" height="100">
+                      {/* Carta Pai Lukisan Tangan */}
+                      <circle cx="48" cy="40" r="28" fill="#fef08a" stroke="#0f172a" strokeWidth="2" />
+                      <path d="M48 40 L48 12 A28 28 0 0 1 74 50 Z" fill="#bfdbfe" stroke="#0f172a" strokeWidth="2" />
+                      <path d="M48 40 L74 50 A28 28 0 0 1 32 63 Z" fill="#fbcfe8" stroke="#0f172a" strokeWidth="2" />
+                      <text x="53" y="34" fontSize="8" fontWeight="bold" fill="#0f172a">meN-</text>
+                      <text x="52" y="54" fontSize="8" fontWeight="bold" fill="#0f172a">-kan</text>
+                      <text x="27" y="42" fontSize="8" fontWeight="bold" fill="#0f172a">beR-</text>
+
+                      {/* Kotak Nota Mini di Bawah Carta */}
+                      <rect x="12" y="78" width="76" height="26" rx="5" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="1.5" strokeDasharray="3 2" />
+                      <text x="18" y="90" fontSize="7.5" fill="#334155">1. Awalan (meN-)</text>
+                      <text x="18" y="100" fontSize="7.5" fill="#2563eb">2. Apitan (meN-...-kan)</text>
+                    </svg>
+                  </div>
+
+                  {/* Lajur Kanan: Nota Tulisan Tangan & Bulatan Merah */}
+                  <div className="mini-board-notes">
+                    <div className="mini-board-title">Imbuhan Bahasa</div>
+                    <div className="mini-board-line">
+                      Kata Dasar: <strong>baca</strong>
+                    </div>
+                    <div className="mini-board-formula">
+                      Subjek + <span className="mini-red-circle">membacakan</span> ✏️
+                    </div>
+                    <div className="mini-board-line" style={{ fontSize: '0.82rem', color: '#475569' }}>
+                      "Ali membacakan adiknya buku."
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bar Bawah Papan Putih */}
+                <div className="mini-board-footer">
+                  <span className="mini-avatar-dot">👨🏻‍🏫</span>
+                  <span className="mini-input-bar">Taip jawapan atau soalan...</span>
+                </div>
+              </div>
+              <div className="mini-laptop-base"></div>
+            </div>
+
+            {/* 3 Kad Putih Terapung di Sebelah Kanan */}
+            <div className="floating-feature-stack">
+              <div className="floating-white-card">
+                <div className="floating-card-icon" style={{ background: '#eff6ff', color: '#2563eb' }}>
+                  📖
+                </div>
+                <div>
+                  <h4>Learn any topic</h4>
+                  <p>Use your own school notes or just ask</p>
+                </div>
+              </div>
+
+              <div className="floating-white-card">
+                <div className="floating-card-icon" style={{ background: '#f5f3ff', color: '#7c3aed' }}>
+                  ⚡
+                </div>
+                <div>
+                  <h4>Prepare for exam</h4>
+                  <p>Review syllabus and practice with clues</p>
+                </div>
+              </div>
+
+              <div className="floating-white-card">
+                <div className="floating-card-icon" style={{ background: '#fdf2f8', color: '#db2777' }}>
+                  ✏️
+                </div>
+                <div>
+                  <h4>Help with homework</h4>
+                  <p>Learn how to solve it step by step</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -801,7 +912,10 @@ export default function App() {
 
   // ==================== PAGE 3: GRADE & PARENT EMAIL ====================
   if (step === 3) {
-    const grades = ['Primary Student', 'Secondary Student', 'Not a student'];
+    const grades = [
+      'Bridge & Lower Secondary (Age 12-15 / Std 6 - Form 3)',
+      'Upper Secondary (Age 16-17 / Form 4-5 SPM)',
+    ];
     return (
       <div className="onboarding-page">
         <div className="onboarding-topbar">
@@ -1277,6 +1391,11 @@ export default function App() {
   // ==================== PAGE 6: TOPIC SELECTION ====================
   if (step === 6) {
     const activeModeData = MODE_CONTENT[lang][learningMode];
+    const activeSyllabus =
+      curriculumKB[userData.grade_level] ||
+      curriculumKB['Bridge & Lower Secondary (Age 12–15 / Std 6 – Form 3)'];
+
+    const bmChips = Object.values(activeSyllabus.categories).flat().slice(0, 8);
     const handleStartTopic = (e) => {
       e.preventDefault();
       if (!topicInput.trim() && !attachedFileName && !attachedUrl.trim()) {
@@ -1551,9 +1670,14 @@ export default function App() {
           </form>
 
           <div className="subject-chips-wrap" style={{ width: '100%' }}>
-            <div className="subject-chips-title">{t.quickSuggestions}</div>
+            <div className="subject-chips-title">
+              {t.quickSuggestions} -{''}
+              <span style={{ color: '#2563eb' }}>
+                {lang === 'Bahasa Melayu' ? activeSyllabus.label_bm : activeSyllabus.label_en}
+              </span>
+            </div>
             <div className="subject-chips">
-              {activeModeData.chips.map((chip) => (
+              {bmChips.map((chip) => (
                 <button
                   type="button"
                   key={chip}
@@ -2354,14 +2478,110 @@ export default function App() {
 
   const lectureSteps = getLectureSteps(lessonTopic);
 
+  const pickTutorVoice = (tutorName, isBM) => {
+    if (!('speechSynthesis' in window)) return null;
+    const voices = window.speechSynthesis.getVoices();
+    if (!voices || voices.length === 0) return null;
+
+    const targetLang = isBM ? 'ms' : 'en';
+    const langVoices = voices.filter((v) =>
+      v.lang.toLowerCase().startsWith(targetLang)
+    );
+    const pool = langVoices.length > 0 ? langVoices : voices;
+
+    const femaleHints = ['female', 'woman', 'girl', 'zira', 'samantha', 'victoria', 'google uk english female', 'yasmin', 'siti', 'ruby'];
+    const maleHints = ['male', 'man', 'boy', 'david', 'mark', 'daniel', 'google uk english male', 'osman', 'marcel'];
+
+    if (tutorName === 'Ruby') {
+      return (
+        pool.find((v) => femaleHints.some((h) => v.name.toLowerCase().includes(h))) ||
+        pool[pool.length - 1] ||
+        null
+      );
+    }
+
+    return (
+      pool.find((v) => maleHints.some((h) => v.name.toLowerCase().includes(h))) ||
+      pool[0] ||
+      null
+    );
+  };
+
   const speakText = async (text) => {
     setCurrentSubtitle(text);
-    if (isMuted) return;
+    if (isMuted || !text) return;
 
     if (window.currentTutorAudio) {
       window.currentTutorAudio.pause();
       window.currentTutorAudio = null;
     }
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+    const speakAndWait = async (text) => {
+      setCurrentSubtitle(text);
+      if (isMuted || !text) return;
+
+      if (window.currentTutorAudio) {
+        window.currentTutorAudio.pause();
+        window.currentTutorAudio = null;
+      }
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+
+      setSpeakingTutor(selectedTutor);
+      try {
+        const res = await fetch('http://localhost:8000/api/tts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            text,
+            tutor: selectedTutor,
+            language: userData.preferred_language,
+            speed: userData.speech_speed || 1.0,
+          }),
+        });
+        if (!res.ok) throw new Error('TTS server unavailable');
+        const blob = await res.blob();
+        const audioUrl = URL.createObjectURL(blob);
+        const audio = new Audio(audioUrl);
+        window.currentTutorAudio = audio;
+
+        await new Promise((resolve) => {
+          const done = () => {
+            setSpeakingTutor(null);
+            URL.revokeObjectURL(audioUrl);
+            resolve();
+          };
+          audio.onended = done;
+          audio.onerror = done;
+          audio.play().catch(done);
+        });
+      } catch {
+        if ('speechSynthesis' in window) {
+          await new Promise((resolve) => {
+            const utterance = new SpeechSynthesisUtterance(text);
+            const bmMode = userData.preferred_language === 'Bahasa Melayu';
+            utterance.lang = bmMode ? 'ms-MY' : 'en-US';
+            utterance.rate = userData.speech_speed || 1.0;
+            utterance.pitch = selectedTutor === 'Ruby' ? 1.25 : 0.92;
+            const chosenVoice = pickTutorVoice(selectedTutor, bmMode);
+            if (chosenVoice) utterance.voice = chosenVoice;
+
+            const done = () => {
+              setSpeakingTutor(null);
+              resolve();
+            };
+            utterance.onend = done;
+            utterance.onerror = done;
+            window.speechSynthesis.speak(utterance);
+          });
+        } else {
+          setSpeakingTutor(null);
+        }
+      }
+    };
 
     setSpeakingTutor(selectedTutor);
     try {
@@ -2375,7 +2595,7 @@ export default function App() {
           speed: userData.speech_speed || 1.0,
         }),
       });
-      if (!res.ok) throw new Error('TTS error');
+      if (!res.ok) throw new Error('TTS server unavailable');
       const blob = await res.blob();
       const audioUrl = URL.createObjectURL(blob);
       const audio = new Audio(audioUrl);
@@ -2384,13 +2604,33 @@ export default function App() {
         setSpeakingTutor(null);
         URL.revokeObjectURL(audioUrl);
       };
+      audio.onerror = () => {
+        setSpeakingTutor(null);
+        URL.revokeObjectURL(audioUrl);
+      };
       await audio.play();
     } catch {
-      setSpeakingTutor(null);
+      // Sandaran Web Speech API (speechSynthesis) dengan suara & kelajuan berbeza bagi Marcel vs Ruby
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        const bmMode = userData.preferred_language === 'Bahasa Melayu';
+        utterance.lang = bmMode ? 'ms-MY' : 'en-US';
+        utterance.rate = userData.speech_speed || 1.0;
+        utterance.pitch = selectedTutor === 'Ruby' ? 1.18 : 0.9;
+
+        const chosenVoice = pickTutorVoice(selectedTutor, bmMode);
+        if (chosenVoice) utterance.voice = chosenVoice;
+
+        utterance.onend = () => setSpeakingTutor(null);
+        utterance.onerror = () => setSpeakingTutor(null);
+        window.speechSynthesis.speak(utterance);
+      } else {
+        setSpeakingTutor(null);
+      }
     }
   };
 
-  const writeAnimatedText = async (ed, { x, y, text, size = 'm', color = 'black' }) => {
+  const writeAnimatedText = async (ed, { x, y, text, size = 'm', color = 'black', maxWidth = 640 }) => {
     const textShapeId = createShapeId();
     ed.createShape({
       id: textShapeId,
@@ -2402,6 +2642,8 @@ export default function App() {
         font: 'draw',
         size,
         color,
+        autoSize: false,
+        w: maxWidth,
       },
     });
 
@@ -2423,135 +2665,537 @@ export default function App() {
           },
         });
 
-        const currentLineStr = builtText.split('\n')[lineIdx] || '';
-        const approxWidth = currentLineStr.length * (size === 'l' ? 13.5 : 10.5);
-        const approxY = y + lineIdx * 34 + 14;
+        const approxX = Math.min(maxWidth - 20, (builtText.length % 52) * 11);
+        const approxRow = Math.floor(builtText.length / 52) + lineIdx;
         const screenPt = ed.pageToScreen({
-          x: x + approxWidth,
-          y: approxY,
+          x: x + approxX,
+          y: y + approxRow * 32 + 14,
         });
 
         setPenPos({ x: screenPt.x, y: screenPt.y - 22 });
-        await new Promise((r) => setTimeout(r, 150));
+        await new Promise((r) => setTimeout(r, 110));
       }
     }
   };
 
-  const runWhiteboardSequence = async (editorInstance) => {
-    const ed = editorInstance || boardEditor;
-    if (!ed) return;
+  const speakAndWait = async (text) => {
+    setCurrentSubtitle(text);
+    if (isMuted || !text) return;
 
-    const existingIds = Array.from(ed.getCurrentPageShapeIds());
-    if (existingIds.length > 0) ed.deleteShapes(existingIds);
+    if (window.currentTutorAudio) {
+      window.currentTutorAudio.pause();
+      window.currentTutorAudio = null;
+    }
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
 
-    for (let i = 0; i < lectureSteps.length; i++) {
-      const item = lectureSteps[i];
+    setSpeakingTutor(selectedTutor);
+    try {
+      const res = await fetch('http://localhost:8000/api/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text,
+          tutor: selectedTutor,
+          language: userData.preferred_language,
+          speed: userData.speech_speed || 1.0,
+        }),
+      });
+      if (!res.ok) throw new Error('TTS server unavailable');
+      const blob = await res.blob();
+      const audioUrl = URL.createObjectURL(blob);
+      const audio = new Audio(audioUrl);
+      window.currentTutorAudio = audio;
 
-      if (isFollowingTutor) {
-        ed.centerOnPoint(
-          { x: item.x + 210, y: item.y + 45 },
-          { animation: { duration: 400 } }
-        );
-        await new Promise((r) => setTimeout(r, 420));
+      await new Promise((resolve) => {
+        const done = () => {
+          setSpeakingTutor(null);
+          URL.revokeObjectURL(audioUrl);
+          resolve();
+        };
+        audio.onended = done;
+        audio.onerror = done;
+        audio.play().catch(done);
+      });
+    } catch {
+      if ('speechSynthesis' in window) {
+        await new Promise((resolve) => {
+          const utterance = new SpeechSynthesisUtterance(text);
+          const bmMode = userData.preferred_language === 'Bahasa Melayu';
+          utterance.lang = bmMode ? 'ms-MY' : 'en-US';
+          utterance.rate = userData.speech_speed || 1.0;
+          utterance.pitch = selectedTutor === 'Ruby' ? 1.25 : 0.92;
+          const chosenVoice = pickTutorVoice(selectedTutor, bmMode);
+          if (chosenVoice) utterance.voice = chosenVoice;
+
+          const done = () => {
+            setSpeakingTutor(null);
+            resolve();
+          };
+          utterance.onend = done;
+          utterance.onerror = done;
+          window.speechSynthesis.speak(utterance);
+        });
+      } else {
+        setSpeakingTutor(null);
+      }
+    }
+  };
+  const renderLessonToBoard = async (ed, lessonData, startX = 90, startY = 80, isFirst = true) => {
+    let currentY = startY;
+
+    if (isFollowingTutor) {
+      ed.centerOnPoint({ x: startX + 250, y: startY + 215 }, { animation: { duration: 400 } });
+      await new Promise((r) => setTimeout(r, 420));
+    }
+
+    // ==================== LANGKAH 1: ALUAN + TAJUK & PETA MINDA ====================
+    const drawTitleAndMindmap = async () => {
+      if (!isFirst) {
+        currentY += 38;
+        return;
       }
 
-      speakText(item.speech);
+      const titleText = lessonData.board_title || lessonTopic;
+      ed.createShape({
+        type: 'geo',
+        x: startX - 8,
+        y: currentY + 4,
+        props: {
+          geo: 'rectangle',
+          w: Math.min(480, Math.max(190, titleText.length * 14)),
+          h: 36,
+          color: 'yellow',
+          fill: 'solid',
+          dash: 'solid',
+        },
+      });
 
-      if (item.highlight) {
+      await writeAnimatedText(ed, {
+        x: startX,
+        y: currentY,
+        text: titleText,
+        size: 'l',
+        color: 'black',
+        maxWidth: 480,
+      });
+      currentY += 62;
+
+      if (Array.isArray(lessonData.mindmap_branches) && lessonData.mindmap_branches.length > 0) {
+        const branches = lessonData.mindmap_branches.slice(0, 6);
+        const colX = [startX - 15, startX + 168, startX + 351];
+        const boxW = 165;
+        const boxH = 54;
+
+        const row1Y = currentY;
+        const centerY = row1Y + boxH + 34;
+        const centerX = startX + 135;
+        const centerW = 230;
+        const centerH = 52;
+        const row2Y = centerY + centerH + 34;
+
         ed.createShape({
           type: 'geo',
-          x: item.x - 6,
-          y: item.y + 4,
+          x: centerX,
+          y: centerY,
           props: {
-            geo: 'rectangle',
-            w: Math.max(190, item.text.length * 13.5),
-            h: 34,
+            geo: 'oval',
+            w: centerW,
+            h: centerH,
             color: 'yellow',
             fill: 'solid',
             dash: 'draw',
           },
         });
-      }
 
-      await writeAnimatedText(ed, {
-        x: item.x,
-        y: item.y,
-        text: item.text,
-        size: item.size,
-        color: item.color,
-      });
-
-      if (item.circleWord) {
-        await new Promise((r) => setTimeout(r, 300));
-        const offset = item.circleOffset || { x: 92, w: 105 };
-        const circleScreenPt = ed.pageToScreen({
-          x: item.x + offset.x + offset.w,
-          y: item.y + 18,
+        ed.createShape({
+          type: 'text',
+          x: centerX + 14,
+          y: centerY + (lessonTopic.length > 18 ? 6 : 14),
+          props: {
+            richText: toRichText(lessonTopic),
+            font: 'draw',
+            size: 's',
+            color: 'black',
+            autoSize: false,
+            w: centerW - 28,
+          },
         });
-        setPenPos({ x: circleScreenPt.x, y: circleScreenPt.y - 22 });
+
+        await new Promise((r) => setTimeout(r, 200));
+
+        for (let b = 0; b < branches.length; b++) {
+          const isBottomRow = b >= 3;
+          const colIdx = b % 3;
+          const boxX = colX[colIdx];
+          const boxY = isBottomRow ? row2Y : row1Y;
+
+          const startArrowX = centerX + centerW / 2;
+          const startArrowY = isBottomRow ? centerY + centerH : centerY;
+          const endArrowX = boxX + boxW / 2;
+          const endArrowY = isBottomRow ? boxY : boxY + boxH;
+
+          ed.createShape({
+            type: 'arrow',
+            x: startArrowX,
+            y: startArrowY,
+            props: {
+              start: { x: 0, y: 0 },
+              end: {
+                x: endArrowX - startArrowX,
+                y: endArrowY - startArrowY,
+              },
+              color: 'blue',
+              dash: 'draw',
+              size: 's',
+            },
+          });
+
+          ed.createShape({
+            type: 'geo',
+            x: boxX,
+            y: boxY,
+            props: {
+              geo: 'rectangle',
+              w: boxW,
+              h: boxH,
+              color: 'light-blue',
+              fill: 'solid',
+              dash: 'draw',
+            },
+          });
+
+          ed.createShape({
+            type: 'text',
+            x: boxX + 8,
+            y: boxY + 10,
+            props: {
+              richText: toRichText(branches[b]),
+              font: 'draw',
+              size: 's',
+              color: 'black',
+              autoSize: false,
+              w: boxW - 16,
+            },
+          });
+
+          await new Promise((r) => setTimeout(r, 140));
+        }
+
+        currentY = (branches.length > 3 ? row2Y + boxH : centerY + centerH) + 26;
+      }
+    };
+
+    await Promise.all([
+      drawTitleAndMindmap(),
+      speakAndWait(lessonData.tutor_speech),
+    ]);
+
+    // ==================== LANGKAH 2: KONSEP / RUMUS ====================
+    if (lessonData.formula_or_rule) {
+      const writeFormula = async () => {
+        await writeAnimatedText(ed, {
+          x: startX,
+          y: currentY,
+          text: lessonData.formula_or_rule,
+          size: 'm',
+          color: 'black',
+          maxWidth: 480,
+        });
+        const formulaLines = Math.max(1, Math.ceil(lessonData.formula_or_rule.length / 45));
+        currentY += formulaLines * 30 + 22;
+      };
+
+      await Promise.all([
+        writeFormula(),
+        speakAndWait(lessonData.formula_or_rule),
+      ]);
+    }
+
+    // ==================== LANGKAH 3: CONTOH + BULATAN MERAH ====================
+    if (lessonData.example_text) {
+      const writeExample = async () => {
+        await writeAnimatedText(ed, {
+          x: startX,
+          y: currentY,
+          text: lessonData.example_text,
+          size: 'm',
+          color: 'black',
+          maxWidth: 480,
+        });
+
+        if (lessonData.target_word) {
+          const sentence = lessonData.example_text;
+          const target = lessonData.target_word.trim();
+          const idx = sentence.toLowerCase().indexOf(target.toLowerCase());
+
+          if (idx !== -1) {
+            const charsPerLine = 45;
+            const lineIdx = Math.floor(idx / charsPerLine);
+            const colIdx = idx % charsPerLine;
+
+            ed.createShape({
+              type: 'geo',
+              x: startX + colIdx * 10.2 - 6,
+              y: currentY + lineIdx * 30 + 2,
+              props: {
+                geo: 'ellipse',
+                w: Math.max(52, target.length * 11 + 14),
+                h: 32,
+                color: 'red',
+                fill: 'none',
+                dash: 'draw',
+                size: 's',
+              },
+            });
+          }
+        }
+
+        const exampleLines = Math.max(1, Math.ceil(lessonData.example_text.length / 44));
+        currentY += exampleLines * 30 + 24;
+      };
+
+      await Promise.all([
+        writeExample(),
+        speakAndWait(lessonData.example_text),
+      ]);
+    }
+
+    // ==================== LANGKAH 4: GAMBAR ILUSTRASI ====================
+    if (lessonData.imageDataUrl) {
+      const assetId = AssetRecordType.createId();
+      ed.createAssets([
+        {
+          id: assetId,
+          type: 'image',
+          typeName: 'asset',
+          props: {
+            name: 'lesson_illustration.png',
+            src: lessonData.imageDataUrl,
+            w: 420,
+            h: 220,
+            mimeType: 'image/png',
+            isAnimated: false,
+          },
+          meta: {},
+        },
+      ]);
+
+      ed.createShape({
+        type: 'image',
+        x: startX,
+        y: currentY,
+        props: {
+          assetId,
+          w: 420,
+          h: 220,
+        },
+      });
+      currentY += 245;
+      await new Promise((r) => setTimeout(r, 350));
+    }
+
+    // ==================== LANGKAH 5: RUMUSAN / TIP BIRU ====================
+    if (lessonData.meaning_or_takeaway) {
+      const writeTakeaway = async () => {
+        const meaningText = lessonData.meaning_or_takeaway;
+        const estLines = Math.max(1, Math.ceil(meaningText.length / 46));
+        const boxHeight = estLines * 32;
 
         ed.createShape({
           type: 'geo',
-          x: item.x + offset.x,
-          y: item.y - 4,
+          x: startX - 8,
+          y: currentY + 3,
           props: {
-            geo: 'ellipse',
-            w: offset.w,
-            h: 40,
-            color: 'red',
-            fill: 'none',
-            dash: 'draw',
+            geo: 'rectangle',
+            w: Math.min(475, Math.max(200, Math.min(meaningText.length, 46) * 10.5)),
+            h: boxHeight,
+            color: 'light-blue',
+            fill: 'solid',
+            dash: 'solid',
           },
         });
-      }
 
-      await new Promise((r) => setTimeout(r, 1400));
+        await writeAnimatedText(ed, {
+          x: startX,
+          y: currentY,
+          text: meaningText,
+          size: 'm',
+          color: 'black',
+          maxWidth: 480,
+        });
+        currentY += boxHeight + 22;
+      };
+
+      await Promise.all([
+        writeTakeaway(),
+        speakAndWait(lessonData.meaning_or_takeaway),
+      ]);
+    }
+
+    // ==================== LANGKAH 6: SOALAN LATIHAN ====================
+    if (lessonData.follow_up_question) {
+      await Promise.all([
+        writeAnimatedText(ed, {
+          x: startX,
+          y: currentY,
+          text: lessonData.follow_up_question,
+          size: 'm',
+          color: 'black',
+          maxWidth: 480,
+        }),
+        speakAndWait(lessonData.follow_up_question),
+      ]);
     }
 
     setPenPos(null);
   };
+  const runWhiteboardSequence = async (editorInstance) => {
+    const ed = editorInstance || boardEditor;
+    if (!ed || isWritingRef.current) return;
+    isWritingRef.current = true;
+
+    try {
+      const existingIds = Array.from(ed.getCurrentPageShapeIds());
+      if (existingIds.length > 0) ed.deleteShapes(existingIds);
+      setBoardTurnCount(0);
+
+      setCurrentSubtitle(
+        isBM
+          ? `Cikgu ${selectedTutor} sedang menyediakan nota ${lessonTopic}...`
+          : `Tutor ${selectedTutor} is preparing notes for ${lessonTopic}...`
+      );
+
+      try {
+        const promptMsg = `Mulakan pengajaran topik "${lessonTopic}" dengan satu konsep asas dan satu contoh jelas.`;
+        const result = await generateWhiteboardLesson({
+          userMessage: promptMsg,
+          chatHistory: [],
+          username: userData.username,
+          gradeLevel: userData.grade_level,
+          preferredLanguage: userData.preferred_language,
+          learningMode,
+          tutorName: selectedTutor,
+          lessonTopic,
+        });
+
+        const aiData = result.data;
+        setChatHistory([
+          {
+            sender: 'tutor',
+            text: `[Sudah ditulis di papan: ${aiData.example_text} | ${aiData.meaning_or_takeaway}] ${aiData.tutor_speech} ${aiData.follow_up_question || ''}`,
+          },
+        ]);
+
+        await renderLessonToBoard(ed, aiData, 90, 80, true);
+      } catch (err) {
+        console.error('AI Whiteboard error, guna skrip sandaran:', err);
+        ed.createShape({
+          type: 'geo',
+          x: 82,
+          y: 84,
+          props: {
+            geo: 'rectangle',
+            w: Math.min(470, Math.max(200, lessonTopic.length * 14)),
+            h: 36,
+            color: 'yellow',
+            fill: 'solid',
+            dash: 'solid',
+          },
+        });
+        for (let i = 0; i < lectureSteps.length; i++) {
+          const item = lectureSteps[i];
+          speakText(item.speech);
+          await writeAnimatedText(ed, {
+            x: item.x,
+            y: item.y,
+            text: item.text,
+            size: item.size,
+            color: item.color,
+          });
+        }
+        setPenPos(null);
+      }
+    } finally {
+      isWritingRef.current = false;
+    }
+  };
 
   const handleStudentSubmit = async (e) => {
     e.preventDefault();
-    if (!studentReply.trim() || !boardEditor) return;
+    if (!studentReply.trim() || !boardEditor || isWritingRef.current) return;
 
+    isWritingRef.current = true;
     const reply = studentReply.trim();
     setStudentReply('');
 
-    boardEditor.createShape({
-      type: 'text',
-      x: 90,
-      y: 530,
-      props: {
-        richText: toRichText(isBM ? `Jawapan: ${reply}` : `Answer: ${reply}`),
-        font: 'draw',
-        size: 'm',
+    const nextTurn = boardTurnCount + 1;
+    setBoardTurnCount(nextTurn);
+    const nextX = 90 + nextTurn * 560;
+    const nextY = 80;
+
+    try {
+      if (isFollowingTutor) {
+        boardEditor.centerOnPoint({ x: nextX + 240, y: nextY + 230 }, { animation: { duration: 450 } });
+        await new Promise((r) => setTimeout(r, 460));
+      }
+
+      await writeAnimatedText(boardEditor, {
+        x: nextX,
+        y: nextY,
+        text: isBM ? `Jawapan: "${reply}"` : `Your turn: "${reply}"`,
+        size: 's',
         color: 'blue',
-      },
-    });
+        maxWidth: 480,
+      });
 
-    const nextSpeech = isBM
-      ? `Bagus, "${reply}"! Mari kita lihat contoh langkah seterusnya di sebelah kanan papan putih.`
-      : `Nice, ${reply}! Let's look at the next example on the right side of the board.`;
+      setCurrentSubtitle(
+        isBM
+          ? `Cikgu ${selectedTutor} sedang menyemak jawapan anda...`
+          : `Tutor ${selectedTutor} is checking your reply...`
+      );
 
-    speakText(nextSpeech);
+      const updatedHistory = [...chatHistory, { sender: 'student', text: reply }];
+      const result = await generateWhiteboardLesson({
+        userMessage: reply,
+        chatHistory: updatedHistory,
+        username: userData.username,
+        gradeLevel: userData.grade_level,
+        preferredLanguage: userData.preferred_language,
+        learningMode,
+        tutorName: selectedTutor,
+        lessonTopic,
+      });
 
-    if (isFollowingTutor) {
-      boardEditor.centerOnPoint({ x: 700, y: 130 }, { animation: { duration: 450 } });
-      await new Promise((r) => setTimeout(r, 460));
+      const aiData = result.data;
+      setChatHistory([
+        ...updatedHistory,
+        {
+          sender: 'tutor',
+          text: `[Sudah ditulis di papan: ${aiData.example_text} | ${aiData.meaning_or_takeaway}] ${aiData.tutor_speech} ${aiData.follow_up_question || ''}`,
+        },
+      ]);
+
+      await renderLessonToBoard(boardEditor, aiData, nextX, nextY, false);
+    } catch (err) {
+      console.error('AI Reply Error:', err);
+      const fallbackMsg = isBM
+        ? `Bagus cubaan anda, "${reply}"! Cuba bina satu lagi ayat contoh.`
+        : `Good try, "${reply}"! Try making one more example sentence.`;
+      speakText(fallbackMsg);
+      await writeAnimatedText(boardEditor, {
+        x: nextX,
+        y: nextY + 42,
+        text: fallbackMsg,
+        size: 'm',
+        color: 'black',
+        maxWidth: 480,
+      });
+      setPenPos(null);
+    } finally {
+      isWritingRef.current = false;
     }
-
-    await writeAnimatedText(boardEditor, {
-      x: 560,
-      y: 85,
-      text: isBM
-        ? `Langkah 1: Contoh "${lessonTopic}"\n• Perhatikan struktur ayat dengan teliti`
-        : `Step 1: Example for "${lessonTopic}"\n• Notice how the sentence is structured`,
-      size: 'm',
-      color: 'black',
-    });
-
-    setPenPos(null);
   };
 
   // FASA 3 (Wireframe Page 12): Kanvas Papan Putih Utama CikguAI
@@ -2700,12 +3344,12 @@ export default function App() {
         <div
           style={{
             position: 'absolute',
-            bottom: '76px',
+            bottom: '78px',
             left: '50%',
             transform: 'translateX(-50%)',
             zIndex: 480,
-            maxWidth: '540px',
-            width: '80%',
+            maxWidth: '620px',
+            width: '85%',
             textAlign: 'center',
             pointerEvents: 'none',
           }}
@@ -2713,14 +3357,15 @@ export default function App() {
           <span
             style={{
               display: 'inline-block',
-              fontSize: '0.84rem',
-              fontWeight: 700,
+              fontSize: '0.9rem',
+              fontWeight: 800,
               color: '#0f172a',
-              background: 'rgba(255, 255, 255, 0.88)',
-              border: '1px solid #e2e8f0',
-              padding: '0.4rem 1rem',
-              borderRadius: '999px',
-              lineHeight: 1.4,
+              background: '#ffffff',
+              border: '1.5px solid #cbd5e1',
+              boxShadow: '0 6px 20px rgba(15, 23, 42, 0.08)',
+              padding: '0.55rem 1.25rem',
+              borderRadius: '18px',
+              lineHeight: 1.45,
             }}
           >
             {currentSubtitle}

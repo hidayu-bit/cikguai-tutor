@@ -1,0 +1,53 @@
+{
+    "Bridge & Lower Secondary (Age 12–15 / Std 6 – Form 3)": {
+        "label_bm": "Persediaan & Menengah Rendah (Umur 12–15 / Darjah 6 – Tingkatan 3)",
+        "label_en": "Bridge & Lower Secondary (Age 12–15 / Std 6 – Form 3)",
+        "syllabus": "Persediaan Masuk Sekolah Menengah (Darjah 6 / Peralihan SJKC-SJKT) & KSSM Tingkatan 1–3",
+        "ai_guidance": "Pelajar sedang membuat persediaan masuk ke sekolah menengah (Darjah 6 / Peralihan SJKC-SJKT) atau berada di Tingkatan 1–3. Terangkan maksud kosa kata Bahasa Melayu dengan jelas, berikan contoh ayat harian yang mudah, dan betulkan tatabahasa langkah demi langkah.",
+        "categories": {
+            "Tatabahasa & Morfologi": [
+                "Imbuhan Awalan, Akhiran & Apitan",
+                "Kata Ganda & Kata Majmuk",
+                "Golongan Kata (Kata Nama, Kerja & Adjektif)",
+                "Kesalahan Umum Tatabahasa"
+            ],
+            "Kosa Kata & Peribahasa": [
+                "Simpulan Bahasa & Perumpamaan",
+                "Kosa Kata Persediaan Masuk SMK",
+                "Kata Hampir Sama Makna",
+                "Penjodoh Bilangan"
+            ],
+            "Pemahaman & Penulisan": [
+                "Bina Ayat Gramatis",
+                "Ulasan & Ringkasan",
+                "Karangan Pendek (Respons Terhad)",
+                "Pemahaman Petikan"
+            ]
+        }
+    },
+    "Upper Secondary (Age 16–17 / Form 4–5 SPM)": {
+        "label_bm": "Menengah Atas (Umur 16–17 / Tingkatan 4–5 SPM)",
+        "label_en": "Upper Secondary (Age 16–17 / Form 4–5 SPM)",
+        "syllabus": "KSSM Bahasa Melayu Menengah Atas & Format Peperiksaan SPM",
+        "ai_guidance": "Fokus kepada format peperiksaan sebenar SPM Kertas 1 & Kertas 2, teknik penyuntingan kesalahan bahasa, penukaran ayat, dan penggunaan kosa kata luas dalam penulisan.",
+        "categories": {
+            "Sistem Bahasa (Kertas 2 SPM)": [
+                "Morfologi (Bentuk Kata & Imbuhan)",
+                "Sintaksis (Ayat Aktif, Pasif & Songsang)",
+                "Penyuntingan Kesalahan Bahasa",
+                "Bahasa Melayu Standard (Teks Klasik)"
+            ],
+            "Peribahasa & Kosa Kata Luas": [
+                "Peribahasa Mengikut Tema SPM",
+                "Frasa Menarik untuk Karangan",
+                "Istilah & Laras Bahasa"
+            ],
+            "Penulisan & Rumusan (SPM)": [
+                "Teknik Menulis Rumusan SPM",
+                "Karangan Respons Terhad",
+                "Karangan Respons Terbuka",
+                "Pemahaman Umum & Sastera"
+            ]
+        }
+    }
+}
